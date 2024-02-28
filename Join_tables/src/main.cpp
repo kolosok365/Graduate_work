@@ -1,12 +1,10 @@
-#include <iostream>
+п»ї#include <iostream>
 #include <windows.h>
 #include <string>
 #include <sql.h>
 #include <sqltypes.h>
 #include <sqlext.h>
 #include <fstream>
-
-
 
 #define SQL_RETURN_CODE_LEN 1000
 void show_error(unsigned int handletype, const SQLHANDLE& handle) {
@@ -24,13 +22,13 @@ void show_error(unsigned int handletype, const SQLHANDLE& handle) {
     }
 }
 
-bool Сonnect_DBMS(SQLHANDLE& envHandle, SQLHANDLE& connHandle, SQLRETURN& ret) {
+bool РЎonnect_DBMS(SQLHANDLE& envHandle, SQLHANDLE& connHandle, SQLRETURN& ret) {
 
     SQLCHAR* connStr = (SQLCHAR*)"DRIVER={SQL Server};SERVER=LAPTOP-MG3M03B5\\SQLEXPRESS;Trusted_Connection=Yes;";
-    ret = SQLDriverConnect(connHandle, NULL, connStr, SQL_NTS, NULL, 0, NULL, SQL_DRIVER_COMPLETE);//установление соединения с базой данных
+    ret = SQLDriverConnect(connHandle, NULL, connStr, SQL_NTS, NULL, 0, NULL, SQL_DRIVER_COMPLETE);//СѓСЃС‚Р°РЅРѕРІР»РµРЅРёРµ СЃРѕРµРґРёРЅРµРЅРёСЏ СЃ Р±Р°Р·РѕР№ РґР°РЅРЅС‹С…
 
     if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) {
-        std::cout << "Подключение к SSMS успешно установлено." << std::endl;
+        std::cout << "РџРѕРґРєР»СЋС‡РµРЅРёРµ Рє SSMS СѓСЃРїРµС€РЅРѕ СѓСЃС‚Р°РЅРѕРІР»РµРЅРѕ." << std::endl;
         return true;
     }
     return false;
@@ -44,17 +42,17 @@ bool Create_DB(SQLHANDLE& stmtHandle, SQLRETURN& ret, std::string Name_db, std::
         return false;
     }
 
-    std::cout << "База данных " + Name_db + " успешно создана." << std::endl;
+    std::cout << "Р‘Р°Р·Р° РґР°РЅРЅС‹С… " + Name_db + " СѓСЃРїРµС€РЅРѕ СЃРѕР·РґР°РЅР°." << std::endl;
     query.clear();
 
     std::ifstream file(filename);
     if (!file) {
-        std::cerr << "Ошибка при открытии файла" << std::endl;
+        std::cerr << "РћС€РёР±РєР° РїСЂРё РѕС‚РєСЂС‹С‚РёРё С„Р°Р№Р»Р°" << std::endl;
         return 1;
     }
     std::string line;
 
-    // Читаем содержимое файла построчно и сохраняем в строку query
+    // Р§РёС‚Р°РµРј СЃРѕРґРµСЂР¶РёРјРѕРµ С„Р°Р№Р»Р° РїРѕСЃС‚СЂРѕС‡РЅРѕ Рё СЃРѕС…СЂР°РЅСЏРµРј РІ СЃС‚СЂРѕРєСѓ query
     while (std::getline(file, line)) {
         query += line;
         query += '\n';
@@ -70,11 +68,11 @@ bool Create_DB(SQLHANDLE& stmtHandle, SQLRETURN& ret, std::string Name_db, std::
     ret = SQLExecDirect(stmtHandle, (SQLCHAR*)query.c_str(), SQL_NTS);
 
     if (ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO) {
-        std::cout << "Создание сущностей произошло успешно." << std::endl;
+        std::cout << "РЎРѕР·РґР°РЅРёРµ СЃСѓС‰РЅРѕСЃС‚РµР№ РїСЂРѕРёР·РѕС€Р»Рѕ СѓСЃРїРµС€РЅРѕ." << std::endl;
         return true;
     }
     else {
-        std::cout << "Не удалось создать сущности!" << std::endl;
+        std::cout << "РќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕР·РґР°С‚СЊ СЃСѓС‰РЅРѕСЃС‚Рё!" << std::endl;
         return false;
     }
 
@@ -82,7 +80,7 @@ bool Create_DB(SQLHANDLE& stmtHandle, SQLRETURN& ret, std::string Name_db, std::
 
 bool Join_db(const std::string type_car, SQLHANDLE& connHandle, SQLHANDLE& stmtHandle) {
     std::string query = "INSERT INTO db_Result.." + type_car + " SELECT * FROM db_Norm.." + type_car;
-    SQLAllocHandle(SQL_HANDLE_STMT, connHandle, &stmtHandle);//идентификатор запроса
+    SQLAllocHandle(SQL_HANDLE_STMT, connHandle, &stmtHandle);//РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ Р·Р°РїСЂРѕСЃР°
     SQLRETURN answer = SQLExecDirect(stmtHandle, (SQLCHAR*)query.c_str(), SQL_NTS);
     if (!(answer == SQL_SUCCESS || answer == SQL_SUCCESS_WITH_INFO)) {
         show_error(SQL_HANDLE_STMT, stmtHandle);
@@ -91,7 +89,7 @@ bool Join_db(const std::string type_car, SQLHANDLE& connHandle, SQLHANDLE& stmtH
     SQLFreeHandle(SQL_HANDLE_STMT, stmtHandle);
 
     query = "INSERT INTO db_Result.." + type_car + " SELECT * FROM db3_mirror.." + type_car;
-    SQLAllocHandle(SQL_HANDLE_STMT, connHandle, &stmtHandle);//идентификатор запроса
+    SQLAllocHandle(SQL_HANDLE_STMT, connHandle, &stmtHandle);//РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ Р·Р°РїСЂРѕСЃР°
     answer = SQLExecDirect(stmtHandle, (SQLCHAR*)query.c_str(), SQL_NTS);
     if (!(answer == SQL_SUCCESS || answer == SQL_SUCCESS_WITH_INFO)) {
         show_error(SQL_HANDLE_STMT, stmtHandle);
@@ -106,48 +104,48 @@ int main(){
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
     setlocale(LC_ALL, "rus");
-    //// Выполнить инициализацию ODBC
-    SQLHANDLE envHandle;//для хранения дескриптора среды ODBC
-    SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &envHandle);//Идентификатор окружения. Выделяется память и инициализируется дескриптор среды ODBC.
-    SQLSetEnvAttr(envHandle, SQL_ATTR_ODBC_VERSION, (SQLPOINTER)SQL_OV_ODBC3, SQL_IS_POINTER);//Устанавливается атрибут среды ODBC
+    //// Р’С‹РїРѕР»РЅРёС‚СЊ РёРЅРёС†РёР°Р»РёР·Р°С†РёСЋ ODBC
+    SQLHANDLE envHandle;//РґР»СЏ С…СЂР°РЅРµРЅРёСЏ РґРµСЃРєСЂРёРїС‚РѕСЂР° СЃСЂРµРґС‹ ODBC
+    SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &envHandle);//РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РѕРєСЂСѓР¶РµРЅРёСЏ. Р’С‹РґРµР»СЏРµС‚СЃСЏ РїР°РјСЏС‚СЊ Рё РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµС‚СЃСЏ РґРµСЃРєСЂРёРїС‚РѕСЂ СЃСЂРµРґС‹ ODBC.
+    SQLSetEnvAttr(envHandle, SQL_ATTR_ODBC_VERSION, (SQLPOINTER)SQL_OV_ODBC3, SQL_IS_POINTER);//РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚СЃСЏ Р°С‚СЂРёР±СѓС‚ СЃСЂРµРґС‹ ODBC
 
-    // Создать и открыть подключение к SSMS
-    SQLHANDLE connHandle;//будет использоваться для хранения дескриптора подключения к базе данных.
-    SQLAllocHandle(SQL_HANDLE_DBC, envHandle, &connHandle);//Идентификатор соединения. Выделяется память и инициализируется дескриптор подключения к базе данных 
+    // РЎРѕР·РґР°С‚СЊ Рё РѕС‚РєСЂС‹С‚СЊ РїРѕРґРєР»СЋС‡РµРЅРёРµ Рє SSMS
+    SQLHANDLE connHandle;//Р±СѓРґРµС‚ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ РґР»СЏ С…СЂР°РЅРµРЅРёСЏ РґРµСЃРєСЂРёРїС‚РѕСЂР° РїРѕРґРєР»СЋС‡РµРЅРёСЏ Рє Р±Р°Р·Рµ РґР°РЅРЅС‹С….
+    SQLAllocHandle(SQL_HANDLE_DBC, envHandle, &connHandle);//РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ СЃРѕРµРґРёРЅРµРЅРёСЏ. Р’С‹РґРµР»СЏРµС‚СЃСЏ РїР°РјСЏС‚СЊ Рё РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµС‚СЃСЏ РґРµСЃРєСЂРёРїС‚РѕСЂ РїРѕРґРєР»СЋС‡РµРЅРёСЏ Рє Р±Р°Р·Рµ РґР°РЅРЅС‹С… 
     SQLRETURN ret;
 
-    if (!Сonnect_DBMS(envHandle, connHandle, ret)) {
-        std::cout << "Не удалось установить подключение к SSMS." << std::endl;
+    if (!РЎonnect_DBMS(envHandle, connHandle, ret)) {
+        std::cout << "РќРµ СѓРґР°Р»РѕСЃСЊ СѓСЃС‚Р°РЅРѕРІРёС‚СЊ РїРѕРґРєР»СЋС‡РµРЅРёРµ Рє SSMS." << std::endl;
         return 1;
     }
 
     SQLHANDLE stmtHandle;
-    SQLAllocHandle(SQL_HANDLE_STMT, connHandle, &stmtHandle);//идентификатор запроса
+    SQLAllocHandle(SQL_HANDLE_STMT, connHandle, &stmtHandle);//РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ Р·Р°РїСЂРѕСЃР°
 
-    //Создать базу данных
+    //РЎРѕР·РґР°С‚СЊ Р±Р°Р·Сѓ РґР°РЅРЅС‹С…
     if (!Create_DB(stmtHandle, ret, "db_Result", "C:\\Graduate_work\\Creating_Result.sql")) {
         return 1;
     }
     SQLFreeHandle(SQL_HANDLE_STMT, stmtHandle);
 
     if (!Join_db("BUS", connHandle, stmtHandle)) {
-        std::cout << "Ошибка при объединении таблиц с типом ТС \"BUS\"";
+        std::cout << "РћС€РёР±РєР° РїСЂРё РѕР±СЉРµРґРёРЅРµРЅРёРё С‚Р°Р±Р»РёС† СЃ С‚РёРїРѕРј РўРЎ \"BUS\"";
         return 1;
     }
     if (!Join_db("HCV", connHandle, stmtHandle)) {
-        std::cout << "Ошибка при объединении таблиц с типом ТС \"HCV\"";
+        std::cout << "РћС€РёР±РєР° РїСЂРё РѕР±СЉРµРґРёРЅРµРЅРёРё С‚Р°Р±Р»РёС† СЃ С‚РёРїРѕРј РўРЎ \"HCV\"";
         return 1;
     }
     if (!Join_db("LCV", connHandle, stmtHandle)) {
-        std::cout << "Ошибка при объединении таблиц с типом ТС \"LCV\"";
+        std::cout << "РћС€РёР±РєР° РїСЂРё РѕР±СЉРµРґРёРЅРµРЅРёРё С‚Р°Р±Р»РёС† СЃ С‚РёРїРѕРј РўРЎ \"LCV\"";
         return 1;
     }
     if (!Join_db("MT", connHandle, stmtHandle)) {
-        std::cout << "Ошибка при объединении таблиц с типом ТС \"MT\"";
+        std::cout << "РћС€РёР±РєР° РїСЂРё РѕР±СЉРµРґРёРЅРµРЅРёРё С‚Р°Р±Р»РёС† СЃ С‚РёРїРѕРј РўРЎ \"MT\"";
         return 1;
     }
     if (!Join_db("PC", connHandle, stmtHandle)) {
-        std::cout << "Ошибка при объединении таблиц с типом ТС \"PC\"";
+        std::cout << "РћС€РёР±РєР° РїСЂРё РѕР±СЉРµРґРёРЅРµРЅРёРё С‚Р°Р±Р»РёС† СЃ С‚РёРїРѕРј РўРЎ \"PC\"";
         return 1;
     }
     
